@@ -101,7 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if (isset($error['password']) && $error['password'] === 'length'): ?>
     <p>パスワードは4文字以上に設定してください</p>
     <?php endif; ?>
-    <input type="submit" value="内容確認">
+    <div>
+      <input type="submit" value="内容確認">
+    </div>
   </form>
 </body>
 </html>

@@ -17,7 +17,9 @@
       <p>パスワード</p>
       <input type="text" name="password" size="35" value=""/>
     </label>
-    <input type="submit" value="ログイン">
+    <div>
+      <input type="submit" value="ログイン">
+    </div>
   </form>
 </body>
 </html>
