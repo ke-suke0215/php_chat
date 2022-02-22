@@ -6,12 +6,19 @@ $form = $_SESSION['form'];
 // データベースに登録する処理
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $db = dbconnect();
+
+  $password = password_hash($form['password'], PASSWORD_DEFAULT);
   $stmt = $db->prepare('INSERT INTO members (name, email, password) VALUE (?, ?, ?)');
   if (!$stmt) {
     die($db->error);
   }
   $stmt->bind_param('sss', $form['name'], $form['email'], $form['password']);
   $success = $stmt->execute();
+  if (!$success) {
+    die($db->error);
+  }
+  unset($_SESSION['form']);
+  header('Location: thanks.php');
 }
 
 ?>
