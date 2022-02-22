@@ -4,8 +4,8 @@ function h($value) {
 }
 
 function dbconnect() {
-  $db = new mysqli('localhost', 'root', 'root', 'php_chat');
-  if ($db) {
+  $db = new mysqli('localhost:8889', 'root', 'root', 'php_chat');
+  if (!$db) {
     die($db->error);
   }
   return $db;
