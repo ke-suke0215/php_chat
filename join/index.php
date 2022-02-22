@@ -14,6 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $form['name'] = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
   if ($form['name'] === '') {
     $error['name'] = 'blank';
+  } else {
+    if (strlen($form['name']) > 50) {
+      $error['name'] = 'length';
+    }
   }
   
   $form['email'] = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
@@ -41,6 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $form['password'] = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
   if ($form['password'] === '') {
     $error['password'] = 'blank';
+  } else {
+    if (strlen($form['password']) < 4) {
+      $error['password'] = 'length';
+    }
   }
 }
 ?>
@@ -63,6 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if (isset($error['name']) && $error['name'] === 'blank'): ?>
       <p>名前を入力してくだいさい</p>
     <?php endif; ?>
+    <?php if (isset($error['name']) && $error['name'] === 'length'): ?>
+    <p>名前は50文字以内にしてください</p>
+    <?php endif; ?>
     <label>
       <h3>メールアドレス</h3>
       <input type="text" name="email" size="35" value="<?php echo h($form['email']) ?>"/>
@@ -75,12 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
     <label>
       <h3>パスワード</h3>
-      <input type="text" name="password" size="35" value="<?php echo h($form['password']) ?>"/>
+      <input type="password" name="password" size="35" value="<?php echo h($form['password']) ?>"/>
     </label>
     <?php if (isset($error['password']) && $error['password'] === 'blank'): ?>
       <p>パスワードを入力してください</p>
     <?php endif ?>
+    <?php if (isset($error['password']) && $error['password'] === 'length'): ?>
     <p>パスワードは4文字以上に設定してください</p>
+    <?php endif; ?>
     <input type="submit" value="内容確認">
   </form>
 </body>
