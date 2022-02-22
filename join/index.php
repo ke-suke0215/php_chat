@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 require_once('../library.php');
 
 $form = [
@@ -49,6 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (strlen($form['password']) < 4) {
       $error['password'] = 'length';
     }
+  }
+
+  // 入力に問題が無いとき、確認画面に移動
+  if (empty($error)) {
+    $_SESSION['form'] = $form;
+    header('location: check.php');
+    exit();
   }
 }
 ?>
