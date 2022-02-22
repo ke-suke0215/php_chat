@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!$stmt) {
     die($db->error);
   }
-  $stmt->bind_param('sss', $form['name'], $form['email'], $form['password']);
+  $stmt->bind_param('sss', $form['name'], $form['email'], $password);
   $success = $stmt->execute();
   if (!$success) {
     die($db->error);
