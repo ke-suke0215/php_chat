@@ -2,6 +2,8 @@
 session_start();
 require_once('../library.php');
 
+// 変更ボタンが押されてこの画面に遷移してきたとき
+
 $form = [
   'name' => '',
   'email' => '',

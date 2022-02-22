@@ -1,7 +1,14 @@
 <?php
 session_start();
 require_once('../library.php');
-$form = $_SESSION['form'];
+
+// セッションの情報が無いときはindex.phpに移動
+if (isset($_SESSION['form'])) {
+  $form = $_SESSION['form'];
+} else {
+  header('Location: index.php');
+  exit();
+}
 
 // データベースに登録する処理
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
