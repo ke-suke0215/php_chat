@@ -1,3 +1,33 @@
+<?php
+
+require_once('../library.php');
+
+$form = [
+  'name' => '',
+  'email' => '',
+  'password' => ''
+];
+$error = [];
+
+// サーバーからPOSTリクエストが送られてきたとき
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $form['name'] = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+  if ($form['name'] === '') {
+    $error['name'] = 'blank';
+  }
+  
+  $form['email'] = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+  if ($form['email'] === '') {
+    $error['email'] = 'blank';
+  }
+
+  $form['password'] = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+  if ($form['password'] === '') {
+    $error['password'] = 'blank';
+  }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -10,17 +40,28 @@
   <h1>アカウント登録画面</h1>
   <form action="" method="post">
     <label>
-      <p>名前</p>
-      <input type="text" name="name" size="35" value=""/>
+      <h3>名前</h3>
+      <input type="text" name="name" size="35" value="<?php echo h($form['name']) ?>"/>
     </label>
+    <?php if (isset($error['name']) && $error['name'] === 'blank'): ?>
+      <p>名前を入力してくだいさい</p>
+    <?php endif; ?>
     <label>
-      <p>メールアドレス</p>
-      <input type="text" name="email" size="35" value=""/>
+      <h3>メールアドレス</h3>
+      <input type="text" name="email" size="35" value="<?php echo h($form['email']) ?>"/>
     </label>
+    <?php if (isset($error['email']) && $error['email'] === 'blank'): ?>
+      <p>メールアドレスを入力してください</p>
+    <?php endif;?>
+    <p>そのメールアドレスはすでに使用されています</p>
     <label>
-      <p>パスワード</p>
-      <input type="text" name="password" size="35" value=""/>
+      <h3>パスワード</h3>
+      <input type="text" name="password" size="35" value="<?php echo h($form['password']) ?>"/>
     </label>
+    <?php if (isset($error['password']) && $error['password'] === 'blank'): ?>
+      <p>パスワードを入力してください</p>
+    <?php endif ?>
+    <p>パスワードは4文字以上に設定してください</p>
     <input type="submit" value="内容確認">
   </form>
 </body>
