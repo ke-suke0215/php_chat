@@ -3,12 +3,16 @@ session_start();
 require_once('../library.php');
 
 // 変更ボタンが押されてこの画面に遷移してきたとき
+if (isset($_GET['action']) && $_GET['action'] === 'rewrite') {
+  $form = $_SESSION['form'];
+} else {
+  $form = [
+    'name' => '',
+    'email' => '',
+    'password' => ''
+  ];
+}
 
-$form = [
-  'name' => '',
-  'email' => '',
-  'password' => ''
-];
 $error = [];
 
 // サーバーからPOSTリクエストが送られてきたとき
