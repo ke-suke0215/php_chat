@@ -109,6 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
     <div>
       <input type="submit" value="内容確認">
+      <p><a href="../login.php">ログイン</a></p>
     </div>
   </form>
 </body>
