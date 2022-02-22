@@ -3,8 +3,8 @@ session_start();
 require('./library.php');
 
 $form = [
-  $email = '',
-  $password = '',
+  'email' => '',
+  'password' => '',
 ];
 $error = [];
 
@@ -16,6 +16,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $form['password'] = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
   if ($form['password'] === '') {
     $error['password'] = 'blank';
+  }
+
+  if (empty($error)) {
+    $db = dbconnect();
+    $stmt = $db->prepare('SELECT id, name, password FROM members WHERE email=?');
+    if (!$stmt) {
+      die ($db->error);
+    }
+    $stmt->bind_param('s', $form['email']);
+    $success = $stmt->execute();
+    if (!$success) {
+      die ($db->error);
+    }
+    $stmt->bind_result($id, $name, $password);
+    $stmt->fetch();
+
+    // パスワードが正しいか判断
+    if (password_verify($form['password'], $password)) {
+      session_regenerate_id();
+      $_SESSION['id'] = $id;
+      $_SESSION['name'] = $name;
+      header('Location: ./index.php');
+      exit();
+    } else {
+      $error['login'] = 'failed';
+    }
   }
 }
 
@@ -33,6 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <h1>ログイン画面</h1>
   <form action="" method="post">
     <label>
+      <?php if (isset($error['login']) && $error['login'] === 'failed'): ?>
+        <p>メールアドレス、もしくはパスワードが正しくありません</p>
+      <?php endif; ?>
       <p>メールアドレス</p>
       <input type="text" name="email" size="35" value="<?php echo h($form['email']) ?>"/>
       <?php if (isset($error['email']) && $error['email'] === 'blank'): ?>
