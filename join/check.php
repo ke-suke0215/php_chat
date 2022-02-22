@@ -4,6 +4,16 @@ require_once('../library.php');
 $form = $_SESSION['form'];
 
 // データベースに登録する処理
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $db = dbconnect();
+  $stmt = $db->prepare('INSERT INTO members (name, email, password) VALUE (?, ?, ?)');
+  if (!$stmt) {
+    die($db->error);
+  }
+  $stmt->bind_param('sss', $form['name'], $form['email'], $form['password']);
+  $success = $stmt->execute();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
