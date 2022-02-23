@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+// セッションに値が無い場合はログイン画面へ
+if (empty($_SESSION)) {
+  header('Location: ./login.php');
+  exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -8,5 +18,6 @@
 </head>
 <body>
   <h1>投稿一覧</h1>
+  <p><a href="./logout.php">ログアウト</a></p>
 </body>
 </html>
