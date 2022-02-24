@@ -1,10 +1,36 @@
 <?php
 session_start();
+require_once dirname(__FILE__).'/library.php';
 
 // セッションに値が無い場合はログイン画面へ
 if (empty($_SESSION)) {
   header('Location: ./login.php');
   exit();
+} else {
+  // セッションを受け取る
+  $member_id = $_SESSION['id'];
+  $name = $_SESSION['name'];
+}
+
+// メッセージを登録する
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_STRING);
+  if ($message !== '') {
+    $db = dbconnect();
+    $stmt = $db->prepare('INSERT INTO post (message, member_id) VALUES(?, ?)');
+    if (!$stmt) {
+      die($db->error);
+    }
+    // 投稿の内容とメンバーidををSQLに組み込む
+    $stmt->bind_param('si', $message, $member_id);
+    $success = $stmt->execute();
+    if (!$success) {
+      die($db->error);
+    }
+
+    // メッセージを送ったら、フォームの値をリセット
+    header('Location: index.php');
+  }
 }
 ?>
 
@@ -19,5 +45,10 @@ if (empty($_SESSION)) {
 <body>
   <h1>投稿一覧</h1>
   <p><a href="./logout.php">ログアウト</a></p>
+  <form action="" method="post">
+    <h3>メッセージを入力</h3>
+    <input type="text" size="40" name="message"/>
+    <input type="submit" value="投稿">
+  </form>
 </body>
 </html>
