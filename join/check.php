@@ -25,6 +25,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     die($db->error);
   }
   unset($_SESSION['form']);
+
+  $stmt = $db->prepare('SELECT id, name FROM members WHERE email=?');
+  if (!$stmt) {
+    die ($db->error);
+  }
+  $stmt->bind_param('s', $form['email']);
+  $success = $stmt->execute();
+  if (!$success) {
+    die ($db->error);
+  }
+  $stmt->bind_result($id, $name);
+  $stmt->fetch();
+
+  // 投稿一覧画面にidと名前をセッションを通して渡す
+  $_SESSION['id'] = $id;
+  $_SESSION['name'] = $name;
+
   header('Location: ../index.php');
 }
 
