@@ -12,10 +12,21 @@ if (empty($_SESSION)) {
   $name = $_SESSION['name'];
 }
 
-// メッセージを表示する
-
 // データベースに接続
 $db = dbconnect();
+
+// URLパラメータを取得
+$page = filter_input(INPUT_GET, 'page', FILTER_SANITIZE_NUMBER_INT);
+
+// 現在のメッセージの数を取得
+$counts = $db->query('SELECT COUNT(*) as cnt FROM post');
+$count = $counts->fetch_assoc();
+$max_page = ceil($count['cnt'] / 5);
+
+// ページのパラメータがおかしいときはpage=1にリダイレクト
+if ($page > $max_page || $page < 1) {
+  header('Location: index.php?page=1');
+}
 
 // メッセージを登録する
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -55,11 +66,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="submit" value="投稿">
   </form>
   <?php
-    // 投稿の一覧を取得する処理
-    $stmt = $db->prepare('SELECT post.id, post.message, post.member_id, post.created, members.name FROM post, members WHERE post.member_id = members.id ORDER BY id DESC');
+    // URLパラメータが無い場合は1ページ目
+    if (!$page) {
+       $page = 1;
+    }
+    
+    $start_message = ($page - 1) * 5;
+    
+    $stmt = $db->prepare('SELECT post.id, post.message, post.member_id, post.created, members.name FROM post, members WHERE post.member_id = members.id ORDER BY id DESC LIMIT ?, 5');
     if (!$stmt) {
       die($db->error);
     }
+    $stmt->bind_param('i', $start_message);
     $success = $stmt->execute();
     if (!$success) {
       die($db->error);
@@ -73,5 +91,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </p>
   </div>
   <?php endwhile; ?>
+  <?php if ($page > 1): ?>
+    <p><a href="?page=<?php echo $page - 1 ?>">前のページ</a></p>
+  <?php endif; ?>
+  <?php if ($page < $max_page): ?>
+    <p><a href="?page=<?php echo $page + 1 ?>">次のページ</a></p>
+  <?php endif; ?>
 </body>
 </html>
